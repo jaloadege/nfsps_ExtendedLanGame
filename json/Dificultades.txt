@@ -1,0 +1,244 @@
+Dificultades:
+- FACIL
+- NORMAL
+- DIFICIL
+- EXPERTO
+- IMPOSIBLE
+
+
+Autobahnring
+Grip
+A-54 Express - NORMAL
+A-54 Interloop - NORMAL
+Autobahn GP - NORMAL
+Drift
+Drift Course A - FACIL
+Drift Course B - EXPERTO
+Drift Course C - NORMAL
+Drift Course D - IMPOSIBLE
+Drag
+1/2 Mile Drag Strip - FACIL
+1/4 Mile Drag Strip - EXPERTO
+Speed Challenge
+Autobahnring A - FACIL
+Autobahnring B - FACIL
+Autobahnring C - NORMAL
+
+
+
+
+Autopolis
+Grip
+GP Circuit - NORMAL
+Short Circuit - FACIL
+Lakeside - DIFICIL
+Drift
+Drift Course A - NORMAL
+Drift Course B - FACIL
+Drift Course C - NORMAL
+Drift Course D - FACIL
+Drift Course E - NORMAL
+Drift Course F - NORMAL
+Drag
+1/4 Mile Drag Strip - NORMAL
+
+
+
+
+Chicago Airfield
+Courses
+Grip
+Airfield GP - DIFICIL
+Airfield Long - DIFICIL
+Center Field Club - FACIL
+Center Field Loop - FACIL
+North Field - NORMAL
+Drift
+Drift Course A - NORMAL
+Drift Course C - FACIL
+Drag
+1/2 Mile Drag Strip - FACIL
+1/4 Mile Drag Strip - FACIL
+
+
+
+
+Ebisu
+Courses
+Grip
+South Course - EXPERTO
+Togue Course - IMPOSIBLE
+West Course - DIFICIL
+Drift
+Drift Course A - NORMAL
+Drift Course B - FACIL
+Drift Course C - NORMAL
+Drift Course D - DIFICIL
+Drift Course E - FACIL
+Drift Course F - DIFICIL
+Drift Course G - IMPOSIBLE
+Speed Challenge
+Fukushima A - NORMAL
+Fukushima B - DIFICIL
+Fukushima C - EXPERTO
+
+
+
+
+Infineon
+Grip
+GP Circuit - NORMAL
+Long Circuit - DIFICIL
+Short Circuit - FACIL
+Drift
+Drift Course A - DIFICIL
+Drift Course B - NORMAL
+Drift Course C - NORMAL
+Drift Course D - NORMAL
+Drag
+1/2 Mile Drag Strip - NORMAL
+1/4 Mile Drag Strip - FACIL
+
+
+
+
+Leipzig
+Grip
+GP Circuit - EXPERTO
+Speed Loop - DIFICIL
+Super Club - NORMAL
+Drift
+Drift Course A - NORMAL
+Drift Course B - NORMAL
+Drift Course C - NORMAL
+
+
+
+
+Mondello Park
+Grip
+Club Circuit - NORMAL
+GP Circuit - DIFICIL
+Short Circuit A - NORMAL
+Short Circuit B - NORMAL
+Drift
+Drift Course A - NORMAL
+Drift Course B - NORMAL
+Drift Course C - FACIL
+Drag
+1/4 Mile Drag Strip - FACIL
+
+
+
+
+Nevada Highway
+Grip
+Canyon - DIFICIL
+Cheyenne - NORMAL
+Dakota - NORMAL
+Tornado - DIFICIL
+Drift
+Drift Course A - DIFICIL
+Drift Course B - NORMAL
+Drift Course C - NORMAL
+Drag
+1/2 Mile Drag Strip - EXPERTO
+1/4 Mile Drag Strip - NORMAL
+Speed Challenge
+Nevada Highway A - EXPERTO
+Nevada Highway B - DIFICIL
+Nevada Highway C - IMPOSIBLE
+
+
+
+
+Portland International Raceway
+Grip
+Festival Circuit - NORMAL
+GP Circuit - FACIL
+Drift
+Drift Course A - NORMAL
+Drift Course B - NORMAL
+Drag
+1/2 Mile Drag Strip - NORMAL
+1/4 Mile Drag Strip - NORMAL
+
+
+
+
+Texas World Speedway
+Grip
+Club Circuit - DIFICIL
+GP Circuit A - DIFICIL
+GP Circuit B - DIFICIL
+Short Circuit A - NORMAL
+Short Circuit B - NORMAL
+Oval Circuit - FACIL
+Drift
+Drift Course A - NORMAL
+Drift Course B - DIFICIL
+Drift Course C - DIFICIL
+Drift Course D - DIFICIL
+Drag
+1/4 Mile Drag Strip - FACIL
+
+
+
+
+Tokyo Dockyard
+Grip
+Ginza GO - FACIL
+Kyobashi Attack - NORMAL
+Likura Canyon - EXPERTO
+Route 4 Offramp - DIFICIL
+Shimbashi - NORMAL
+Drift
+Drift Course A - NORMAL
+Drift Course B - NORMAL
+Drift Course C - DIFICIL
+Drag
+1/4 Mile Drag Strip - FACIL
+1/4 Tokyo Bay Bridge - NORMAL
+Speed Challenge
+Route 1 First Half - DIFICIL
+Route 2 Second Half - DIFICIL
+Route 3 Whole - EXPERTO
+
+
+
+
+Willow Springs
+Grip
+GP Circuit - NORMAL
+GP Circuit Reverse - NORMAL
+Horse Thief Mile - EXPERTO
+Horse Thief Reverse - EXPERTO
+Short Circuit A - EXPERTO
+Short Circuit B - DIFICIL
+Short Circuit C - DIFICIL
+Drift
+Drift Course B - NORMAL
+Drift Course C - NORMAL
+Drift Course D - FACIL
+Drift Course E - DIFICIL
+Drag
+1/4 Mile Drag Strip - NORMAL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
