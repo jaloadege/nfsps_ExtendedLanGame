@@ -1,0 +1,28 @@
+## Need For Speed ProStreet - Creador de Carreras LAN extendido
+
+Creá tu carrera LAN al instante, con una mejor UI y menos límites:
+- Drift/Drag al mejor de 1 (o al mejor de 9999).
+- Grip con más de 5 vueltas.
+- Speed con más de 1 vuelta (solo en Speed con Loop).
+- Posibilidad de incluir más de 8 carreras (req. modificar .exe del servidor host)
+
+Alguna vez quisiste usar el EVO de Ryo para Drift, o el Skyline de Paul Trask?
+Creá una carrera desafío y elegí cualquier auto pre-rreglado del juego.
+> (algunos autos requieren mods para poder usarse)
+
+
+Además cuenta con sistema de **Pick/Ban**, para torneos.
+Si queda más de una localización **"Pickeada"**, creará una carrera por cada localización.
+> La web crea multi-carreras por una limitación del juego:
+> Al ingresar a la carrera, el juego carga la localización definida (inicial),
+> sin tener en cuenta la carrera.
+
+> Es posible agregar carreras de Nevada, Tokio y Ebisu a la carrera LAN, pero
+> si la localización principal es Ebisu, las carreras de Nevada y Tokio no serán jugables.
+> (quizá es posible forzar la localización actual con mods, req. más investigación)
+
+### Requisitos:
+- Contar con un servidor NFSPS LAN (host normal, mediante /ONLINE/launcher.exe)
+- Creá y enviá la carrera desde la web https://jaloadege.github.io/nfsps_ExtendedLanGame
+> Web En construcción, por ahora el límite es el navegador (ya que no permite conexiones UDP)
+
