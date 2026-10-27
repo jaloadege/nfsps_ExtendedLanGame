@@ -1,558 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NFS ProStreet · Localizaciones</title>
-<meta name="theme-color" content="#080b10">
-<style>
-:root{
-  color-scheme:dark;
-  --bg:#080b10;--panel:#10161e;--panel2:#151d27;--line:#293443;
-  --text:#eef3f8;--muted:#9aa7b6;--accent:#ff5b24;--accent2:#18c8ff;--good:#9be15d;
-  --block:#7a1f2e;--block-line:#c4455a;--block-fg:#ffd0d6;
-  --chosen:#1b4a2a;--chosen-line:#3d9a54;--chosen-fg:#c8f5d0;
-  --shadow:0 18px 50px #0008;
-  --radius-sm:8px;--radius-md:12px;--radius-lg:18px;
-  --motion-quick:150ms;--motion-fast:250ms;--ease:cubic-bezier(.22,1,.36,1);
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 "IBM Plex Sans",Segoe UI,system-ui,sans-serif}
-button,input,select{font:inherit;color:inherit}
-button{cursor:pointer}
-button:disabled{cursor:not-allowed}
-.app{min-height:100vh;background:radial-gradient(circle at 85% 0,#152334 0,#080b10 42%),var(--bg)}
-header{padding:28px clamp(16px,4vw,56px) 18px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;background:#080b10ef;backdrop-filter:blur(16px)}
-.kicker{font-size:11px;letter-spacing:.18em;color:var(--accent2);font-weight:700;text-transform:uppercase}
-.title{display:flex;justify-content:space-between;gap:20px;align-items:end}
-.title h1{font-family:"Barlow Condensed",Segoe UI,sans-serif;font-size:clamp(28px,5vw,52px);line-height:.95;margin:7px 0 8px;letter-spacing:-.03em;text-wrap:balance}
-.title p{margin:0;color:var(--muted);max-width:820px;text-wrap:pretty}
-.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.pill{border:1px solid var(--line);background:#0d131a;padding:6px 10px;border-radius:999px;color:#c7d0da}
-.pill b{color:#fff}
-.pill.pill-block{border-color:var(--block-line);color:var(--block-fg);background:#3a1218}
-.pill.pill-chosen{border-color:var(--chosen-line);color:var(--chosen-fg);background:#102818}
-main{padding:22px clamp(16px,4vw,56px) 96px}
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
-.search{flex:1 1 250px;min-width:200px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius-md);padding:12px 14px;color:var(--text);outline:none;min-height:44px}
-.search:focus{border-color:var(--accent2)}
-select,.ghost,.primary{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
-.primary{background:var(--accent);border-color:var(--accent);color:#180b05;font-weight:700}
-.primary:disabled{opacity:.35}
-.ghost:hover,select:hover{border-color:#556578}
-.view{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:18px}
-.sidebar,.content{background:#0b1017aa;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
-.sidebar{padding:12px;height:max-content;position:sticky;top:148px}
-.sidebar h2,.content h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:8px 8px 12px}
-.hint{margin:0 8px 12px;color:var(--muted);font-size:12px;line-height:1.4}
-.loc-list{display:grid;gap:6px}
-.loc-row{display:flex;align-items:center;gap:6px;border:1px solid transparent;background:transparent;border-radius:12px;padding:4px;transition:background var(--motion-quick) var(--ease),border-color var(--motion-quick) var(--ease)}
-.loc-row:hover{background:var(--panel2)}
-.loc-row.active{background:#1a2430;border-color:#344354}
-.loc-row.blocked{background:#3a1218;border-color:var(--block-line);box-shadow:inset 0 0 0 1px #9a2a3a55}
-.loc-row.blocked.active{background:#4a1520}
-.loc-row.chosen{background:#102818;border-color:var(--chosen-line);box-shadow:inset 0 0 0 1px #2d6a3a55}
-.loc-row.chosen.active{background:#16351f}
-.loc-btn{flex:1;min-width:0;text-align:left;border:0;background:transparent;color:#dbe3ec;border-radius:10px;padding:8px 8px;display:flex;justify-content:space-between;gap:10px;align-items:center;min-height:40px}
-.loc-row.blocked .loc-btn{color:var(--block-fg)}
-.loc-row.chosen .loc-btn{color:var(--chosen-fg)}
-.loc-btn span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.count{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
-.mark{width:40px;height:40px;flex:none;border:1px solid var(--line);background:#0d131a;border-radius:10px;display:grid;place-items:center;font-size:16px;line-height:1;padding:0;opacity:.72}
-.mark:hover{opacity:1;border-color:#556578}
-.mark.on-block{opacity:1;background:var(--block);border-color:var(--block-line)}
-.mark.on-chosen{opacity:1;background:var(--chosen);border-color:var(--chosen-line)}
-.content{padding:20px;min-width:0}
-.empty{min-height:360px;display:grid;place-items:center;text-align:center;color:var(--muted);padding:40px}
-.empty strong{display:block;color:#fff;font-size:22px;margin-bottom:7px}
-.hero{display:grid;grid-template-columns:minmax(180px,290px) 1fr;gap:20px;align-items:stretch}
-.hero-img,.zone-img{position:relative;overflow:hidden;border-radius:14px;border:1px solid var(--line);background:#0d141c}
-.hero-img{min-height:185px}
-.hero-img img,.zone-img img{width:100%;height:100%;object-fit:cover;opacity:.72}
-.hero-label{position:absolute;left:14px;bottom:12px;z-index:2;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#fff;background:#0009;padding:5px 7px;border-radius:6px}
-.hero-copy h2{font-family:"Barlow Condensed",sans-serif;font-size:34px;line-height:1;margin:0 0 9px;text-wrap:balance}
-.hero-copy p{color:#aeb9c6;max-width:850px;text-wrap:pretty}
-.modebar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-.mode-btn{border:1px solid var(--line);background:var(--panel);color:#cbd4dd;border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:8px;min-height:44px}
-.mode-btn.active{border-color:var(--accent);background:#23160f;color:#fff}
-.mode-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:7px;background:#202a35}
-.mode-btn.active .mode-icon{background:#4a2114}
-.zone-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:22px 0 12px}
-.zone-head h3{margin:0;font-size:18px}
-.lock-note{color:var(--block-fg)}
-.lock-note.chosen-note{color:var(--chosen-fg)}
-.zone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.zone{border:1px solid var(--line);background:var(--panel);border-radius:14px;overflow:hidden;transition:transform var(--motion-quick) var(--ease),border-color var(--motion-quick) var(--ease);position:relative}
-.zone:hover{transform:translateY(-2px);border-color:#4c5c70}
-.zone.selected{outline:2px solid var(--accent);outline-offset:-2px}
-.zone.locked{opacity:.58;filter:grayscale(.25)}
-.zone.locked:hover{transform:none;border-color:var(--line)}
-.zone-img{height:120px;border:0;border-bottom:1px solid var(--line);border-radius:0}
-.map-fallback{position:absolute;inset:0;width:100%;height:100%}
-.map-overlay{position:absolute;inset:0;background:linear-gradient(180deg,#0000 45%,#000b);display:flex;align-items:flex-end;padding:9px;color:#fff;font-size:11px;letter-spacing:.08em;z-index:2}
-.zone-body{padding:12px}
-.zone-name{font-weight:700;font-size:15px}
-.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.tag{font-size:10px;border:1px solid var(--line);padding:3px 6px;border-radius:999px;color:#aeb9c6}
-.difficulty{font-weight:700}
-.d-facil{color:var(--good)}.d-normal{color:#78c7ff}.d-dificil{color:#ffd166}.d-experto{color:#ff9b71}.d-imposible{color:#ff5c7c}
-.select-row{display:flex;justify-content:space-between;align-items:center;margin-top:11px;gap:8px}
-.pick{border:0;border-radius:8px;padding:8px 10px;background:#202a35;color:#fff;min-height:36px}
-.zone.selected .pick{background:var(--accent);color:#170b05;font-weight:700}
-.pick:disabled{opacity:.4}
-.bottom{position:fixed;right:20px;bottom:20px;z-index:20;display:flex;align-items:center;gap:10px;background:#0d131af2;border:1px solid #3b4755;padding:10px 12px;border-radius:14px;box-shadow:var(--shadow)}
-.progress{font-weight:700;font-variant-numeric:tabular-nums}
-.progress span{color:var(--accent)}
-.modal{position:fixed;inset:0;background:#000b;display:none;place-items:center;z-index:50;padding:20px}
-.modal.open{display:grid}
-.dialog{width:min(1000px,100%);max-height:90vh;overflow:auto;background:#0d131a;border:1px solid #394656;border-radius:20px;box-shadow:0 30px 100px #000d}
-.dialog-head{padding:20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px;align-items:start}
-.dialog h2{margin:0;font-size:25px;font-family:"Barlow Condensed",sans-serif}
-.close{border:1px solid var(--line);background:transparent;color:#fff;border-radius:9px;padding:8px 12px;min-height:40px}
-.selected-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;padding:18px}
-.selected-item{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);display:grid;grid-template-columns:96px 1fr;gap:11px;align-items:start}
-.selected-map{width:96px;height:72px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#0d141c;position:relative}
-.selected-map img{width:100%;height:100%;object-fit:cover}
-.selected-info h3{margin:0 0 5px}
-.selected-info p{margin:0;color:var(--muted);font-size:12px}
-.dialog-foot{padding:15px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.source{font-size:11px;color:#7f8b99}
-.source a{color:#8fdcff}
-.config-dialog{width:min(860px,100%)}
-.config-body{padding:20px;display:grid;grid-template-columns:minmax(220px,340px) 1fr;gap:20px}
-.config-map{height:250px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0d141c;position:relative}
-.config-map img{width:100%;height:100%;object-fit:cover}
-.config-options{display:grid;gap:20px}
-.option-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
-.option-btn{border:1px solid var(--line);background:var(--panel);color:#cbd4dd;border-radius:10px;padding:9px 12px;cursor:pointer;min-height:40px}
-.option-btn:hover{border-color:#556578}
-.option-btn.active{border-color:var(--accent);background:#23160f;color:#fff}
-.fixed-info{padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#111923;color:#aeb9c6}
-.fixed-info strong{color:#fff}
-.selected-details{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
-.marks-wrap{padding:18px 18px 0;display:grid;gap:12px}
-.marks-block{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--panel)}
-.marks-block.chosen-block{border-color:var(--chosen-line);background:#102818}
-.marks-block.blocked-block{border-color:var(--block-line);background:#3a1218}
-.mark-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.chip{border-radius:999px;padding:6px 10px;font-size:12px;border:1px solid var(--line)}
-.chip-chosen{background:#1b4a2a;border-color:var(--chosen-line);color:var(--chosen-fg)}
-.chip-blocked{background:#7a1f2e;border-color:var(--block-line);color:var(--block-fg)}
-@media(max-width:700px){.config-body{grid-template-columns:1fr}.config-map{height:200px}}
-@media(max-width:850px){
-  .view{grid-template-columns:1fr}
-  .sidebar{position:static}
-  .hero{grid-template-columns:1fr}
-  .hero-img{height:180px}
-  .bottom{left:14px;right:14px;justify-content:space-between}
-  .title{align-items:start;flex-direction:column}
-}
-@media(prefers-reduced-motion:reduce){
-  .zone,.loc-row,.mark{transition:none}
-  .zone:hover{transform:none}
-}
-</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NFS ProStreet · Localizaciones</title>
+  <meta name="theme-color" content="#080b10">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Sans:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<div class="app">
-<header>
-  <div class="kicker">Need for Speed · ProStreet</div>
-  <div class="title">
-    <div>
-      <h1>Localizaciones & zonas - v2.3</h1>
-      <p>Explorá por localización → modo → zona. Bloqueá localizaciones, marcalas como elegidas, y armá tu Race Day.</p>
-    </div>
-  </div>
-  <div class="stats">
-    <div class="pill"><b id="locStat">0</b> localizaciones</div>
-    <div class="pill"><b id="zoneStat">0</b> zonas</div>
-    <div class="pill">5 niveles de dificultad</div>
-    <div class="pill pill-chosen" id="chosenPill" hidden><b id="chosenStat">0</b> elegidas</div>
-    <div class="pill pill-block" id="blockedPill" hidden><b id="blockedStat">0</b> bloqueadas</div>
-  </div>
-</header>
-<main>
-  <div class="toolbar">
-    <input id="search" class="search" placeholder="Buscar localización o zona…" autocomplete="off">
-    <select id="sort">
-      <option value="name">Orden: nombre</option>
-      <option value="difficulty">Orden: dificultad</option>
-      <option value="mode" selected>Orden: modo</option>
-      <option value="location">Orden: localización</option>
-    </select>
-    <button class="ghost" id="reset" type="button">Limpiar selección</button>
-  </div>
-  <div class="view">
-    <aside class="sidebar">
-      <h2>Localizaciones</h2>
-      <p class="hint" style="margin-bottom: 2em;"></p>
-      <!-- <p class="hint">🚫 bloquea localizaciones. ✅ marcar como elegida. Si elige localizaciones, solo es posible elegir zonas de las 'escogidas'.</p> --!>
-      <div id="locList" class="loc-list"></div>
-    </aside>
-    <section class="content" id="content"></section>
-  </div>
-</main>
-<div class="bottom">
-  <div class="progress">Selección: <span id="selectedCount">0</span> zonas</div>
-  <button class="primary" id="accept" type="button">Ver seleccionadas</button>
-</div>
-<div class="modal" id="configModal">
-  <div class="dialog config-dialog">
-    <div class="dialog-head">
-      <div>
-        <div class="kicker">Configurar zona</div>
-        <h2 id="configTitle"></h2>
-        <div id="configMeta" class="source"></div>
-      </div>
-      <button class="close" id="configClose" type="button">Cerrar</button>
-    </div>
-    <div class="config-body">
-      <div class="config-map" id="configMapWrap"></div>
-      <div class="config-options">
+  <div class="app">
+    <header>
+      <div class="kicker">Need for Speed · ProStreet</div>
+      <div class="title">
         <div>
-          <div class="kicker">Modo de juego</div>
-          <div id="raceVariants" class="option-grid"></div>
+          <h1>Localizaciones & zonas - v2.3</h1>
+          <p>Explorá por localización → modo → zona. Bloqueá localizaciones, marcalas como elegidas, y armá tu Race Day.
+          </p>
         </div>
-        <div id="lapSection">
-          <div class="kicker">Cantidad de vueltas</div>
-          <div id="lapOptions" class="option-grid"></div>
+      </div>
+      <div class="stats">
+        <div class="pill"><b id="locStat">0</b> localizaciones</div>
+        <div class="pill"><b id="zoneStat">0</b> zonas</div>
+        <div class="pill">5 niveles de dificultad</div>
+        <div class="pill pill-chosen" id="chosenPill" hidden><b id="chosenStat">0</b> elegidas</div>
+        <div class="pill pill-block" id="blockedPill" hidden><b id="blockedStat">0</b> bloqueadas</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="toolbar">
+        <input id="search" class="search" placeholder="Buscar localización o zona…" autocomplete="off">
+        <select id="sort">
+          <option value="name">Orden: nombre</option>
+          <option value="difficulty">Orden: dificultad</option>
+          <option value="mode" selected>Orden: modo</option>
+          <option value="location">Orden: localización</option>
+        </select>
+        <select id="langSelect" title="Idioma" aria-label="Idioma"></select>
+        <button class="ghost" id="reset" type="button">Limpiar selección</button>
+      </div>
+      <div class="view">
+        <aside class="sidebar">
+          <h2>Localizaciones</h2>
+          <p class="hint" style="margin-bottom: 2em;"></p>
+          <!-- <p class="hint">🚫 bloquea localizaciones. ✅ marcar como elegida. Si elige localizaciones, solo es posible elegir zonas de las 'escogidas'.</p> -->
+          <div id="locList" class="loc-list"></div>
+        </aside>
+        <section class="content" id="content"></section>
+      </div>
+    </main>
+
+    <div class="bottom">
+      <div class="progress">Selección: <span id="selectedCount">0</span> zonas</div>
+      <button class="primary" id="accept" type="button">Ver seleccionadas</button>
+    </div>
+
+    <div class="modal" id="configModal">
+      <div class="dialog config-dialog">
+        <div class="dialog-head">
+          <div>
+            <div class="kicker">Configurar zona</div>
+            <h2 id="configTitle"></h2>
+            <div id="configMeta" class="source"></div>
+          </div>
+          <button class="close" id="configClose" type="button">Cerrar</button>
         </div>
-        <div id="fixedRaceInfo" class="fixed-info"></div>
+        <div class="config-body">
+          <div class="config-map" id="configMapWrap"></div>
+          <div class="config-options">
+            <div>
+              <div class="kicker">Modo de juego</div>
+              <div id="raceVariants" class="option-grid"></div>
+            </div>
+            <div id="lapSection">
+              <div class="kicker">Cantidad de vueltas</div>
+              <div id="lapOptions" class="option-grid"></div>
+            </div>
+            <div id="fixedRaceInfo" class="fixed-info"></div>
+          </div>
+        </div>
+        <div class="dialog-foot">
+          <span class="source" id="configDifficulty"></span>
+          <button class="primary" id="confirmZone" type="button">Seleccionar zona</button>
+        </div>
       </div>
     </div>
-    <div class="dialog-foot">
-      <span class="source" id="configDifficulty"></span>
-      <button class="primary" id="confirmZone" type="button">Seleccionar zona</button>
-    </div>
-  </div>
-</div>
-<div class="modal" id="modal">
-  <div class="dialog">
-    <div class="dialog-head">
-      <div>
-        <div class="kicker">Selección confirmada</div>
-        <h2 id="selectedTitle">Tus zonas seleccionadas</h2>
+
+    <div class="modal" id="modal">
+      <div class="dialog">
+        <div class="dialog-head">
+          <div>
+            <div class="kicker">Selección confirmada</div>
+            <h2 id="selectedTitle">Tus zonas seleccionadas</h2>
+          </div>
+          <button class="close" id="close" type="button">Cerrar</button>
+        </div>
+        <div id="marksWrap" class="marks-wrap"></div>
+        <div class="selected-grid" id="selectedGrid"></div>
+        <div class="dialog-foot">
+          <span class="source">Datos: Need for Speed Wiki / Fandom. Página HTML offline.</span>
+          <button class="primary" id="clearClose" type="button">Salir y limpiar</button>
+        </div>
       </div>
-      <button class="close" id="close" type="button">Cerrar</button>
-    </div>
-    <div id="marksWrap" class="marks-wrap"></div>
-    <div class="selected-grid" id="selectedGrid"></div>
-    <div class="dialog-foot">
-      <span class="source">Datos: Need for Speed Wiki / Fandom. Página HTML offline.</span>
-      <button class="primary" id="clearClose" type="button">Salir y limpiar</button>
     </div>
   </div>
-</div>
-</div>
-<script>
-const DATA = {"locations":{"Autobahnring":[{"name":"1/2 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_1/2_Mile_Drag_Strip.jpg"},{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Drift_Course_C.jpg"},{"name":"Drift Course D","mode":"Drift","difficulty":"IMPOSIBLE","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Drift_Course_D.jpg"},{"name":"A-54 Express","mode":"Grip","difficulty":"NORMAL","map":"https://static.wikia.nocookie.net/nfs/images/b/b3/NFSPS_Map_Autobahnring_-_A-54_Express.jpg"},{"name":"A-54 Interloop","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_A-54_Interloop.jpg"},{"name":"Autobahn GP","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Autobahn_GP.jpg"},{"name":"Autobahnring A","mode":"Speed Challenge","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Autobahnring_A.jpg"},{"name":"Autobahnring B","mode":"Speed Challenge","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Autobahnring_B.jpg"},{"name":"Autobahnring C","mode":"Speed Challenge","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autobahnring_-_Autobahnring_C.jpg"}],"Autopolis":[{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Drift_Course_C.jpg"},{"name":"Drift Course D","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Drift_Course_D.jpg"},{"name":"Drift Course E","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Drift_Course_E.jpg"},{"name":"Drift Course F","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Drift_Course_F.jpg"},{"name":"GP Circuit","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_GP_Circuit.jpg"},{"name":"Lakeside","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Lakeside.jpg"},{"name":"Short Circuit","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Autopolis_-_Short_Circuit.jpg"}],"Chicago Airfield":[{"name":"1/2 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_1/2_Mile_Drag_Strip.jpg"},{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_Drift_Course_A.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_Drift_Course_C.jpg"},{"name":"Airfield GP","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_Airfield_GP.jpg"},{"name":"Airfield Long","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_Airfield_Long.jpg"},{"name":"Center Field Club","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_Center_Field_Club.jpg"},{"name":"Center Field Loop","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_Center_Field_Loop.jpg"},{"name":"North Field","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Chicago_Airfield_-_North_Field.jpg"}],"Ebisu":[{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_C.jpg"},{"name":"Drift Course D","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_D.jpg"},{"name":"Drift Course E","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_E.jpg"},{"name":"Drift Course F","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_F.jpg"},{"name":"Drift Course G","mode":"Drift","difficulty":"IMPOSIBLE","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Drift_Course_G.jpg"},{"name":"South Course","mode":"Grip","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_South_Course.jpg"},{"name":"Togue Course","mode":"Grip","difficulty":"IMPOSIBLE","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Togue_Course.jpg"},{"name":"West Course","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_West_Course.jpg"},{"name":"Fukushima A","mode":"Speed Challenge","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Fukushima_A.jpg"},{"name":"Fukushima B","mode":"Speed Challenge","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Fukushima_B.jpg"},{"name":"Fukushima C","mode":"Speed Challenge","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Ebisu_-_Fukushima_C.jpg"}],"Infineon":[{"name":"1/2 Mile Drag Strip","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_1/2_Mile_Drag_Strip.jpg"},{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_Drift_Course_C.jpg"},{"name":"Drift Course D","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_Drift_Course_D.jpg"},{"name":"GP Circuit","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_GP_Circuit.jpg"},{"name":"Long Circuit","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_Long_Circuit.jpg"},{"name":"Short Circuit","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Infineon_-_Short_Circuit.jpg"}],"Leipzig":[{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Leipzig_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Leipzig_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Leipzig_-_Drift_Course_C.jpg"},{"name":"GP Circuit","mode":"Grip","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Leipzig_-_GP_Circuit.jpg"},{"name":"Speed Loop","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Leipzig_-_Speed_Loop.jpg"},{"name":"Super Club","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Leipzig_-_Super_Club.jpg"}],"Mondello Park":[{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_Drift_Course_C.jpg"},{"name":"Club Circuit","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_Club_Circuit.jpg"},{"name":"GP Circuit","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_GP_Circuit.jpg"},{"name":"Short Circuit A","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_Short_Circuit_A.jpg"},{"name":"Short Circuit B","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Mondello_Park_-_Short_Circuit_B.jpg"}],"Nevada Highway":[{"name":"1/2 Mile Drag Strip","mode":"Drag","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_1/2_Mile_Drag_Strip.jpg"},{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Drift_Course_C.jpg"},{"name":"Canyon","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Canyon.jpg"},{"name":"Cheyenne","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Cheyenne.jpg"},{"name":"Dakota","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Dakota.jpg"},{"name":"Tornado","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Tornado.jpg"},{"name":"Nevada Highway A","mode":"Speed Challenge","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Nevada_Highway_A.jpg"},{"name":"Nevada Highway B","mode":"Speed Challenge","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Nevada_Highway_B.jpg"},{"name":"Nevada Highway C","mode":"Speed Challenge","difficulty":"IMPOSIBLE","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Nevada_Highway_-_Nevada_Highway_C.jpg"}],"Portland International Raceway":[{"name":"1/2 Mile Drag Strip","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Portland_International_Raceway_-_1/2_Mile_Drag_Strip.jpg"},{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Portland_International_Raceway_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Portland_International_Raceway_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Portland_International_Raceway_-_Drift_Course_B.jpg"},{"name":"Festival Circuit","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Portland_International_Raceway_-_Festival_Circuit.jpg"},{"name":"GP Circuit","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Portland_International_Raceway_-_GP_Circuit.jpg"}],"Texas World Speedway":[{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Drift_Course_C.jpg"},{"name":"Drift Course D","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Drift_Course_D.jpg"},{"name":"Club Circuit","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Club_Circuit.jpg"},{"name":"GP Circuit A","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_GP_Circuit_A.jpg"},{"name":"GP Circuit B","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_GP_Circuit_B.jpg"},{"name":"Oval Circuit","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Oval_Circuit.jpg"},{"name":"Short Circuit A","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Short_Circuit_A.jpg"},{"name":"Short Circuit B","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Texas_World_Speedway_-_Short_Circuit_B.jpg"}],"Tokyo Dockyard":[{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_1/4_Mile_Drag_Strip.jpg"},{"name":"1/4 Tokyo Bay Bridge","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_1/4_Tokyo_Bay_Bridge.jpg"},{"name":"Drift Course A","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Drift_Course_A.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Drift_Course_C.jpg"},{"name":"Ginza GO","mode":"Grip","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Ginza_GO.jpg"},{"name":"Kyobashi Attack","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Kyobashi_Attack.jpg"},{"name":"Likura Canyon","mode":"Grip","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Likura_Canyon.jpg"},{"name":"Route 4 Offramp","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Route_4_Offramp.jpg"},{"name":"Shimbashi","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Shimbashi.jpg"},{"name":"Route 1 First Half","mode":"Speed Challenge","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Route_1_First_Half.jpg"},{"name":"Route 2 Second Half","mode":"Speed Challenge","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Route_2_Second_Half.jpg"},{"name":"Route 3 Whole","mode":"Speed Challenge","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Tokyo_Dockyard_-_Route_3_Whole.jpg"}],"Willow Springs":[{"name":"1/4 Mile Drag Strip","mode":"Drag","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_1/4_Mile_Drag_Strip.jpg"},{"name":"Drift Course B","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Drift_Course_B.jpg"},{"name":"Drift Course C","mode":"Drift","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Drift_Course_C.jpg"},{"name":"Drift Course D","mode":"Drift","difficulty":"FACIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Drift_Course_D.jpg"},{"name":"Drift Course E","mode":"Drift","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Drift_Course_E.jpg"},{"name":"GP Circuit","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_GP_Circuit.jpg"},{"name":"GP Circuit Reverse","mode":"Grip","difficulty":"NORMAL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_GP_Circuit_Reverse.jpg"},{"name":"Horse Thief Mile","mode":"Grip","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Horse_Thief_Mile.jpg"},{"name":"Horse Thief Reverse","mode":"Grip","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Horse_Thief_Reverse.jpg"},{"name":"Short Circuit A","mode":"Grip","difficulty":"EXPERTO","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Short_Circuit_A.jpg"},{"name":"Short Circuit B","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Short_Circuit_B.jpg"},{"name":"Short Circuit C","mode":"Grip","difficulty":"DIFICIL","map":"https://nfs.fandom.com/wiki/Special:FilePath/NFSPS_Map_Willow_Springs_-_Short_Circuit_C.jpg"}]},"descriptions":{"Autobahnring":"Germany’s Autobahnring is an interlocking web of high-speed roads that include sections of the Autobahn, as well as banked corners and tunnels.","Autopolis":"Autopolis is perched on a mountaintop in a remote part of Japan. Although the circuit has murky origins, the high-speed course is new and clean.","Chicago Airfield":"Windy City drivers have taken over an abandoned airport and made it their own. Chicago Airfield has a wide runway, several grip and drift routes, and a drag strip.","Ebisu":"A Japanese mountainside was carved out to house Ebisu, the spiritual home of drifting. The Fukuyama Challenge departs across the countryside turning onto an expressway.","Infineon":"Northern California’s Infineon Raceway has a complex series of hilly twists and turns. One false move will slow you down or put you into one of the many walls.","Leipzig":"The elite Porsche test track in Leipzig, Germany, features reproductions of some of the most famous corners in racing.","Mondello Park":"Mondello Park is an incredibly twisty and compact course dropped in the middle of the Irish countryside.","Nevada Highway":"Highway Route 318 is a stretch of sun-baked tarmac deep in the Nevada desert. Speeds over 200 mph are possible, but watch out for the deceptively simple curves.","Portland International Raceway":"Situated near Mt. Rainier in the lush greenery of the Pacific Northwest, Portland International Raceway, or PIR, is a demanding road-course with a top-quality drag strip.","Texas World Speedway":"Everything’s bigger in Texas, and Texas World Speedway is no exception, where a twisting road-course snakes in and out of a banked oval.","Tokyo Dockyard":"Japanese drivers have taken over the industrial shipping hub of the Tokyo Dockyards. They’ve built some intense race routes using every conceivable piece of the urban landscape.","Willow Springs":"Willow Springs, known as the fastest road in the West, sits on a hillside in the California desert. Willow has constant elevation changes and high average speeds."},"difficultyOrder":["FACIL","NORMAL","DIFICIL","EXPERTO","IMPOSIBLE"],"source":"https://nfs.fandom.com/wiki/Need_for_Speed:_ProStreet/Locations"};
-const diffRank = Object.fromEntries(DATA.difficultyOrder.map((d,i)=>[d,i]));
-const modeOrder = {Grip:0,Drift:1,Drag:2,"Speed Challenge":3};
-const icons = {Grip:"↻",Drift:"〰",Drag:"↕","Speed Challenge":"⌁"};
-const modeLabel = {Grip:"Grip",Drift:"Drift",Drag:"Drag","Speed Challenge":"Speed"};
-const raceVariants = {
-  Grip:[["circuito","Circuito (Normal)"],["time-attack","Time Attack"],["sector-shootout","Sector Shootout"],["group","Group"]],
-  Drag:[["arrancones","Arrancones (Normal)"],["wheelie","Wheelie"]],
-  Drift:[],
-  "Speed Challenge":[["carrera","Carrera (Normal)"],["velocidad-maxima","Velocidad máxima"]]
-};
-const state = {
-  location: Object.keys(DATA.locations)[0] || null,
-  mode: null,
-  selected: new Map(),
-  blocked: new Set(),
-  chosen: new Set(),
-  sort: "mode",
-  query: "",
-  config: null
-};
-const $ = (s) => document.querySelector(s);
-function slug(s){
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-}
-function esc(s){
-  return String(s).replace(/[&<>"']/g, c => ({"&":"&"+"amp;","<":"&"+"lt;",">":"&"+"gt;",'"':"&"+"quot;","'":"&#39;"}[c]));
-}
-function difficultyClass(d){ return "d-" + slug(d); }
-function hashHue(label){
-  let n = 0;
-  for (let i = 0; i < label.length; i++) n = (n * 31 + label.charCodeAt(i)) >>> 0;
-  return n % 360;
-}
-function trackPath(mode){
-  if (mode === "Drag") return "M80 210 H720";
-  if (mode === "Drift") return "M90 300 C160 40 250 380 380 120 S560 40 720 250 C760 320 620 360 520 300 S240 360 90 300";
-  if (mode === "Speed Challenge") return "M40 250 C180 80 300 320 470 140 S720 80 780 230";
-  return "M180 80 C420 40 680 90 700 210 C720 330 520 380 360 350 C180 310 80 280 90 180 C100 90 140 90 180 80";
-}
-function fallbackSvg(label, mode){
-  const hue = hashHue(label + (mode || "loc"));
-  const stroke = "%23" + ((hue * 9973) % 0xffffff).toString(16).padStart(6,"0");
-  const path = trackPath(mode);
-  const sub = mode ? ("NFS PROSTREET · " + mode.toUpperCase()) : "NFS PROSTREET · LOCALIZACIÓN";
-  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#101923"/><stop offset="1" stop-color="#27394a"/></linearGradient></defs><rect width="800" height="420" fill="url(#g)"/><g fill="none" stroke="#8da0b5" stroke-width="18" opacity=".35"><path d="M-20 300 C130 30 240 400 380 120 S610 30 820 220"/><path d="M20 100 C200 240 300 40 500 260 S650 350 820 120"/></g><path d="'+path+'" fill="none" stroke="hsl('+hue+' 72% 58%)" stroke-width="8" stroke-linecap="round"/><text x="34" y="55" fill="#fff" font-family="Arial" font-size="28" font-weight="700">'+esc(label)+'</text><text x="34" y="84" fill="#a9bacb" font-family="Arial" font-size="15">'+esc(sub)+'</text></svg>'
-  );
-}
-function mapFrame(src, alt, fallbackLabel, mode){
-  return '<img src="'+esc(src)+'" alt="'+esc(alt)+'" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">';
-}
-function canSelect(loc){
-  if (state.blocked.has(loc)) return false;
-  if (state.chosen.size > 0 && !state.chosen.has(loc)) return false;
-  return true;
-}
-function lockReason(loc){
-  if (state.blocked.has(loc)) return "Esta localización está bloqueada. No podés seleccionar sus zonas.";
-  if (state.chosen.size > 0 && !state.chosen.has(loc)) return "Hay localizaciones elegidas. Solo podés seleccionar zonas de esas.";
-  return null;
-}
-function stripSelected(pred){
-  for (const id of [...state.selected.keys()]) {
-    const loc = id.split("|")[0];
-    if (!pred(loc)) state.selected.delete(id);
-  }
-}
-function toggleBlocked(loc){
-  if (state.blocked.has(loc)) {
-    state.blocked.delete(loc);
-  } else {
-    state.blocked.add(loc);
-    state.chosen.delete(loc);
-    stripSelected(l => l !== loc);
-  }
-  render();
-}
-function toggleChosen(loc){
-  if (state.chosen.has(loc)) {
-    state.chosen.delete(loc);
-  } else {
-    state.chosen.add(loc);
-    state.blocked.delete(loc);
-    stripSelected(l => state.chosen.has(l));
-  }
-  render();
-}
-function defaultConfig(z){
-  const variant = (raceVariants[z.mode] && raceVariants[z.mode][0]) ? raceVariants[z.mode][0][0] : z.mode.toLowerCase().replace(/\s+/g,"-");
-  const laps = z.mode === "Grip" ? 3 : (z.mode === "Speed Challenge" ? 1 : 3);
-  return {variant, laps};
-}
-function openConfig(id){
-  const [loc, mode, ...rest] = id.split("|");
-  const name = rest.join("|");
-  const z = DATA.locations[loc].find(x => x.name === name && x.mode === mode);
-  if (!z || !canSelect(loc)) return;
-  const existing = state.selected.get(id);
-  state.config = {id, loc, mode, name, z, ...(existing || defaultConfig(z))};
-  renderConfig();
-  $("#configModal").classList.add("open");
-}
-function onZonePick(id){
-  if (state.selected.has(id)) {
-    state.selected.delete(id);
-    render();
-    return;
-  }
-  openConfig(id);
-}
-function renderLocations(){
-  const q = state.query;
-  const names = Object.keys(DATA.locations).filter(l =>
-    !q || l.toLowerCase().includes(q) || DATA.locations[l].some(z => z.name.toLowerCase().includes(q))
-  );
-  $("#locList").innerHTML = names.map(l => {
-    const blocked = state.blocked.has(l);
-    const chosen = state.chosen.has(l);
-    const active = state.location === l;
-    const cls = ["loc-row", active && "active", blocked && "blocked", chosen && "chosen"].filter(Boolean).join(" ");
-    return '<div class="'+cls+'">'+
-      '<button type="button" class="mark '+(blocked?"on-block":"")+'" data-block="'+esc(l)+'" title="Bloquear" aria-label="Bloquear '+esc(l)+'" aria-pressed="'+blocked+'">🚫</button>'+
-      '<button type="button" class="mark '+(chosen?"on-chosen":"")+'" data-choose="'+esc(l)+'" title="Marcar como elegida" aria-label="Elegir '+esc(l)+'" aria-pressed="'+chosen+'">✅</button>'+
-      '<button type="button" class="loc-btn" data-loc="'+esc(l)+'"><span>'+esc(l)+'</span><span class="count">'+DATA.locations[l].length+'</span></button>'+
-    '</div>';
-  }).join("") || '<div class="source" style="padding:10px">Sin coincidencias.</div>';
-}
-function zonesHtml(loc, zones){
-  let shown = zones.filter(z => (!state.mode || z.mode === state.mode) && (!state.query || (z.name+" "+z.mode).toLowerCase().includes(state.query)));
-  shown.sort((a,b) => {
-    if (state.sort === "difficulty") return (diffRank[a.difficulty]-diffRank[b.difficulty]) || a.name.localeCompare(b.name);
-    if (state.sort === "mode") return (modeOrder[a.mode]-modeOrder[b.mode]) || a.name.localeCompare(b.name);
-    return a.name.localeCompare(b.name);
-  });
-  if (!shown.length) return '<div class="empty">No hay zonas con ese filtro.</div>';
-  const locked = !canSelect(loc);
-  return shown.map((z,i) => {
-    const id = loc+"|"+z.mode+"|"+z.name;
-    const sel = state.selected.has(id);
-    return '<article class="zone '+(sel?"selected":"")+(locked?" locked":"")+'">'+
-      '<div class="zone-img">'+mapFrame(String((z.map)).replace(/^.*\/(NFSPS_Map.*)\.(jpe*g|png)$/ig, './img/$1.webp').replace(/1\/(4|2)/ig, '1_$1'), "Mapa "+z.name, z.name, z.mode)+
-      '<div class="map-overlay">MAP ZONE · '+esc(z.mode)+'</div></div>'+
-      '<div class="zone-body"><div class="zone-name">'+esc(z.name)+'</div>'+
-      '<div class="meta"><span class="tag">'+esc(modeLabel[z.mode])+'</span>'+
-      '<span class="tag difficulty '+difficultyClass(z.difficulty)+'">'+esc(z.difficulty)+'</span></div>'+
-      '<div class="select-row"><span class="source">'+(locked?"No disponible":(sel?"Seleccionada":"Disponible"))+'</span>'+
-      '<button class="pick" data-zone="'+esc(id)+'" '+(locked?"disabled":"")+'>'+(sel?"Quitar":"Seleccionar")+'</button>'+
-      '</div></div></article>';
-  }).join("");
-}
-function renderContent(){
-  const c = $("#content");
-  if (!state.location) {
-    c.innerHTML = '<div class="empty"><div><strong>Elegí una localización</strong>Después seleccioná el modo y las zonas que quieras incluir.</div></div>';
-    return;
-  }
-  const loc = state.location;
-  const zones = DATA.locations[loc];
-  const modes = [...new Set(zones.map(z => z.mode))];
-  const first = zones[0];
-  const reason = lockReason(loc);
-  c.innerHTML = '<div class="hero"><div class="hero-img">'+mapFrame(String((first.map)).replace(/^.*\/(.*?)_-_.*$/ig, './img/$1.webp'), loc, loc)+
-    '<div class="hero-label">'+esc(loc)+'</div></div>'+
-    '<div class="hero-copy"><div class="kicker">Localización</div><h2>'+esc(loc)+'</h2>'+
-    '<p>'+esc(DATA.descriptions[loc] || "")+'</p>'+
-    '<div class="meta"><span class="tag">'+zones.length+' zonas</span><span class="tag">'+modes.length+' modos</span>'+
-    '<span class="tag">'+zones.filter(z=>z.difficulty==="IMPOSIBLE").length+' imposibles</span>'+
-    (state.blocked.has(loc)?'<span class="tag" style="border-color:var(--block-line);color:var(--block-fg)">🚫 Bloqueada</span>':'')+
-    (state.chosen.has(loc)?'<span class="tag" style="border-color:var(--chosen-line);color:var(--chosen-fg)">✅ Elegida</span>':'')+
-    '</div></div></div>'+
-    '<div class="modebar"><button class="mode-btn '+(!state.mode?"active":"")+'" data-mode="" type="button">Todos</button>'+
-    modes.map(m => '<button class="mode-btn '+(state.mode===m?"active":"")+'" data-mode="'+esc(m)+'" type="button"><span class="mode-icon">'+icons[m]+'</span>'+modeLabel[m]+'</button>').join("")+
-    '</div><div class="zone-head"><h3>'+(state.mode?modeLabel[state.mode]:"Todas las zonas")+'</h3>'+
-    '<span class="source '+(reason?(state.blocked.has(loc)?"lock-note":"lock-note chosen-note"):"")+'">'+(reason || "Seleccioná una zona para configurar el tipo de carrera y las vueltas.")+'</span></div>'+
-    '<div class="zone-grid">'+zonesHtml(loc, zones)+'</div>';
-}
-function renderConfig(){
-  const c = state.config;
-  if (!c) return;
-  $("#configTitle").textContent = c.loc + " · " + c.name;
-  $("#configMeta").textContent = modeLabel[c.mode] + " · " + c.z.difficulty;
-  $("#configDifficulty").innerHTML = 'Dificultad: <strong class="difficulty '+difficultyClass(c.z.difficulty)+'">'+esc(c.z.difficulty)+'</strong>';
-  $("#configMapWrap").innerHTML = mapFrame(String((c.z.map)).replace(/^.*\/(NFSPS_Map.*)\.(jpe*g|png)$/ig, './img/$1.webp').replace(/1\/(4|2)/ig, '1_$1'), "Mapa "+c.name, c.name, c.mode);
-  const variants = raceVariants[c.mode] || [];
-  if (c.mode === "Drift") {
-    $("#raceVariants").innerHTML = '<button class="option-btn active" disabled>Drift</button>';
-  } else {
-    $("#raceVariants").innerHTML = variants.map(([v,label]) =>
-      '<button class="option-btn '+(c.variant===v?"active":"")+'" data-variant="'+v+'" type="button">'+label+'</button>'
-    ).join("");
-  }
-  if (c.mode === "Grip") {
-    $("#lapOptions").innerHTML = [1,2,3,4,5].map(n =>
-      '<button class="option-btn '+(c.laps===n?"active":"")+'" data-laps="'+n+'" type="button">'+n+'</button>'
-    ).join("");
-    $("#fixedRaceInfo").innerHTML = "<strong>Grip:</strong> podés elegir entre 1 y 5 vueltas.";
-  } else if (c.mode === "Drift") {
-    $("#lapOptions").innerHTML = '<button class="option-btn active" disabled>3 rondas</button>';
-    $("#fixedRaceInfo").innerHTML = "<strong>Drift:</strong> 3 rondas.";
-  } else if (c.mode === "Drag") {
-    $("#lapOptions").innerHTML = '<button class="option-btn active" disabled>3 rondas</button>';
-    $("#fixedRaceInfo").innerHTML = "<strong>Drag:</strong> 3 rondas.";
-  } else {
-    $("#lapOptions").innerHTML = '<button class="option-btn active" disabled>1 vuelta</button>';
-    $("#fixedRaceInfo").innerHTML = "<strong>Speed:</strong> una sola oportunidad.";
-  }
-}
-function saveConfig(){
-  const c = state.config;
-  if (!c) return;
-  state.selected.set(c.id, {variant:c.variant, laps: c.mode==="Grip"?c.laps:(c.mode==="Speed Challenge"?1:3)});
-  state.config = null;
-  $("#configModal").classList.remove("open");
-  render();
-}
-function renderSelected(){
-  const arr = [...state.selected.entries()].map(([id,opt]) => {
-    const [loc, mode, ...rest] = id.split("|");
-    const name = rest.join("|");
-    const z = DATA.locations[loc].find(x => x.name === name && x.mode === mode);
-    return {loc, mode, name, z, opt};
-  });
-  $("#selectedTitle").textContent = "Tus zonas seleccionadas ("+arr.length+")";
-  const wrap = $("#marksWrap");
-  if (!state.chosen.size && !state.blocked.size) {
-    wrap.innerHTML = "";
-    wrap.hidden = true;
-  } else {
-    wrap.hidden = false;
-    let html = "";
-    if (state.chosen.size) {
-      html += '<div class="marks-block chosen-block"><div class="kicker">Localizaciones elegidas</div>'+
-        '<div class="mark-chips">'+[...state.chosen].map(l => '<span class="chip chip-chosen">✅ '+esc(l)+'</span>').join("")+'</div>'+
-        '<p class="source" style="margin:8px 0 0">Solo se pueden seleccionar zonas de estas localizaciones.</p></div>';
-    }
-    if (state.blocked.size) {
-      html += '<div class="marks-block blocked-block"><div class="kicker">Localizaciones bloqueadas</div>'+
-        '<div class="mark-chips">'+[...state.blocked].map(l => '<span class="chip chip-blocked">🚫 '+esc(l)+'</span>').join("")+'</div>'+
-        '<p class="source" style="margin:8px 0 0">No se pueden seleccionar zonas de estas localizaciones.</p></div>';
-    }
-    wrap.innerHTML = html;
-  }
-  $("#selectedGrid").innerHTML = arr.length ? arr.map((x,i) => {
-    const variant = (raceVariants[x.mode]||[]).find(v => v[0]===x.opt.variant);
-    const variantLabel = variant ? variant[1] : (x.mode === "Drift" ? "Drift" : x.opt.variant);
-    const unit = (x.mode==="Drift"||x.mode==="Drag") ? "rondas" : (x.mode==="Speed Challenge"?"vuelta":"vueltas");
-    return '<div class="selected-item"><div class="selected-map">'+mapFrame(String((x.z.map)).replace(/^.*\/(NFSPS_Map.*)\.(jpe*g|png)$/ig, './img/$1.webp').replace(/1\/(4|2)/ig, '1_$1'), "Mapa "+x.name, x.name, x.mode)+'</div>'+
-      '<div class="selected-info"><div class="kicker">Zona '+String(i+1).padStart(2,"0")+'</div>'+
-      '<h3>'+esc(x.loc)+" · "+esc(x.name)+'</h3>'+
-      '<p>'+esc(modeLabel[x.mode])+' · <strong class="difficulty '+difficultyClass(x.z.difficulty)+'">'+esc(x.z.difficulty)+'</strong></p>'+
-      '<div class="selected-details"><span class="tag">'+esc(variantLabel)+'</span><span class="tag">'+x.opt.laps+" "+unit+'</span></div>'+
-      '<p style="margin-top:7px">'+esc(DATA.descriptions[x.loc])+'</p></div></div>';
-  }).join("") : '<div class="empty" style="min-height:160px">No hay zonas seleccionadas todavía.</div>';
-}
-function renderStats(){
-  $("#locStat").textContent = Object.keys(DATA.locations).length;
-  $("#zoneStat").textContent = Object.values(DATA.locations).reduce((n,z)=>n+z.length,0);
-  $("#selectedCount").textContent = state.selected.size;
-  $("#chosenStat").textContent = state.chosen.size;
-  $("#blockedStat").textContent = state.blocked.size;
-  $("#chosenPill").hidden = state.chosen.size === 0;
-  $("#blockedPill").hidden = state.blocked.size === 0;
-}
-function render(){
-  renderLocations();
-  renderContent();
-  renderStats();
-}
-function clearAll(){
-  state.selected.clear();
-  state.blocked.clear();
-  state.chosen.clear();
-  state.config = null;
-  $("#configModal").classList.remove("open");
-  $("#modal").classList.remove("open");
-  render();
-}
-$("#search").addEventListener("input", e => { state.query = e.target.value.trim().toLowerCase(); render(); });
-$("#sort").addEventListener("change", e => { state.sort = e.target.value; renderContent(); });
-$("#reset").addEventListener("click", clearAll);
-$("#accept").addEventListener("click", () => { renderSelected(); $("#modal").classList.add("open"); });
-$("#close").addEventListener("click", () => $("#modal").classList.remove("open"));
-$("#clearClose").addEventListener("click", clearAll);
-$("#modal").addEventListener("click", e => { if (e.target.id === "modal") $("#modal").classList.remove("open"); });
-$("#configClose").addEventListener("click", () => { $("#configModal").classList.remove("open"); state.config = null; });
-$("#confirmZone").addEventListener("click", saveConfig);
-$("#configModal").addEventListener("click", e => { if (e.target.id === "configModal") { $("#configModal").classList.remove("open"); state.config = null; } });
-document.addEventListener("click", e => {
-  const block = e.target.closest("[data-block]");
-  if (block) { toggleBlocked(block.getAttribute("data-block")); return; }
-  const choose = e.target.closest("[data-choose]");
-  if (choose) { toggleChosen(choose.getAttribute("data-choose")); return; }
-  const loc = e.target.closest("[data-loc]");
-  if (loc) { state.location = loc.getAttribute("data-loc"); state.mode = null; render(); return; }
-  const modeBtn = e.target.closest(".modebar [data-mode]");
-  if (modeBtn) { state.mode = modeBtn.getAttribute("data-mode") || null; renderContent(); return; }
-  const zone = e.target.closest("[data-zone]");
-  if (zone && !zone.disabled) { onZonePick(zone.getAttribute("data-zone")); return; }
-  const variant = e.target.closest("[data-variant]");
-  if (variant && state.config) { state.config.variant = variant.getAttribute("data-variant"); renderConfig(); return; }
-  const laps = e.target.closest("[data-laps]");
-  if (laps && state.config) { state.config.laps = Number(laps.getAttribute("data-laps")); renderConfig(); return; }
-});
-render();
-</script>
+
+  <script src="main.js"></script>
 </body>
+
 </html>
