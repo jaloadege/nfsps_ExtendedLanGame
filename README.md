@@ -23,7 +23,7 @@ Si queda más de una localización **"Pickeada"**, creará una carrera por cada 
 
 ### Requisitos:
 - Contar con un servidor NFSPS LAN (host normal, mediante /ONLINE/launcher.exe)
-- Crear la carrera desde la ![web](https://jaloadege.github.io/nfsps_ExtendedLanGame)
+- Crear la carrera desde la [web](https://jaloadege.github.io/nfsps_ExtendedLanGame)
 - Enviar los datos de creación mediante el script nfs_ps_ExtendedLAN.ps1 *(o nfs_ps_ExtendedLAN.bat)*
 
 > La página web todavía está en construcción
@@ -32,5 +32,5 @@ Si queda más de una localización **"Pickeada"**, creará una carrera por cada 
 
 
 
-Imagenes de maps *robadas* de la wiki de ![nfs fandom](https://nfs.fandom.com). Dejo acá mi agradecimiento a los changos.
+Imagenes de maps *robadas* de la wiki de [nfs fandom](https://nfs.fandom.com). Dejo acá mi agradecimiento a los changos.
 Las otras imagenes son de thumbnails de videos de yt.
