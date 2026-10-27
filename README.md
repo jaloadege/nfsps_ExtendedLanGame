@@ -4,7 +4,7 @@ Creá tu carrera LAN al instante, con una mejor UI y menos límites:
 - Drift/Drag al mejor de 1 (o al mejor de 9999).
 - Grip con más de 5 vueltas.
 - Speed con más de 1 vuelta (solo en Speed con Loop).
-- Posibilidad de incluir más de 8 carreras (req. modificar .exe del servidor host)
+- Posibilidad de incluir más de 8 carreras (req. modificar .exe del servidor)
 
 Alguna vez quisiste usar el EVO de Ryo para Drift, o el Skyline de Paul Trask?
 Creá una carrera desafío y elegí cualquier auto pre-rreglado del juego.
@@ -23,6 +23,10 @@ Si queda más de una localización **"Pickeada"**, creará una carrera por cada 
 
 ### Requisitos:
 - Contar con un servidor NFSPS LAN (host normal, mediante /ONLINE/launcher.exe)
-- Creá y enviá la carrera desde la web https://jaloadege.github.io/nfsps_ExtendedLanGame
-> Web En construcción, por ahora el límite es el navegador (ya que no permite conexiones UDP)
+- Crear la carrera desde la web https://jaloadege.github.io/nfsps_ExtendedLanGame
+- Enviar los datos de creación mediante el script nfs_ps_ExtendedLAN.ps1 *(o nfs_ps_ExtendedLAN.bat)*
+
+> La página web todavía está en construcción
+
+> Me hubiera encantado que sea solo web, y enviar datos directo sin descargar nada. Pero por limitaciones del navegador es necesario enviar los datos utilizando herramientas externas :/
 
