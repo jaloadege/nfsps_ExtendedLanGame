@@ -1,0 +1,512 @@
+{
+  "locations": {
+    "Autobahnring": [
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_drag_1",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_drag_2",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_drift_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_drift_2",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_drift_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_drift_4",
+        "difficulty": 4
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_grip_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_grip_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_grip_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_sc_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_sc_2",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/autobahn_gd/autobahn_gd_sc_3",
+        "difficulty": 1
+      }
+    ],
+    "Autopolis": [
+      {
+        "zone": "tracks/autopolis/autopolis_drag_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_drift_2",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_drift_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_drift_4",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_drift_5",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_drift_6",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_grip_1_gp",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_grip_2_lakeside",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/autopolis/autopolis_grip_3_short",
+        "difficulty": 0
+      }
+    ],
+    "Chicago Airfield": [
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_drag_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_drag_2",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_drift_3",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_grip_1",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_grip_2",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_grip_3",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_grip_4",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/chicago_gd/chicago_gd_grip_5_dday",
+        "difficulty": 0
+      }
+    ],
+    "Ebisu": [
+      {
+        "zone": "tracks/ebisu/ebisu_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_drift_3",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_drift_4",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_drift_5",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_drift_6",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_drift_7",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_drift_8",
+        "difficulty": 4
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_grip_1_west",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_grip_2_south",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_grip_3_togue",
+        "difficulty": 4
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_sc_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_sc_2",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/ebisu/ebisu_sc_3",
+        "difficulty": 3
+      }
+    ],
+    "Infineon": [
+      {
+        "zone": "tracks/infineon/infineon_drag_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/infineon/infineon_drag_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/infineon/infineon_drift_1",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/infineon/infineon_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/infineon/infineon_drift_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/infineon/infineon_drift_4",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/infineon/infineon_grip_1_long",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/infineon/infineon_grip_2_medium",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/infineon/infineon_grip_3_short",
+        "difficulty": 0
+      }
+    ],
+    "Leipzig": [
+      {
+        "zone": "tracks/leipzig/leipzig_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/leipzig/leipzig_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/leipzig/leipzig_drift_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/leipzig/leipzig_grip_1_gp",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/leipzig/leipzig_grip_2_hs_loop",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/leipzig/leipzig_grip_3_superclub",
+        "difficulty": 1
+      }
+    ],
+    "Mondello Park": [
+      {
+        "zone": "tracks/mondello_park/mondello_park_drag_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_drift_3",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_grip_1_club",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_grip_2_gp",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_grip_3_short",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/mondello_park/mondello_park_grip_4",
+        "difficulty": 1
+      }
+    ],
+    "Nevada Highway": [
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_drag_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_drag_2",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_drift_1",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_drift_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_grip_1",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_grip_2",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_grip_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_grip_4",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_sc_1",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_sc_2",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/nevada_gd/nevada_gd_sc_3",
+        "difficulty": 4
+      }
+    ],
+    "Portland International Raceway": [
+      {
+        "zone": "tracks/portland/portland_drag_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/portland/portland_drag_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/portland/portland_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/portland/portland_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/portland/portland_grip_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/portland/portland_grip_2_festival",
+        "difficulty": 1
+      }
+    ],
+    "Texas World Speedway": [
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_drag_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_drift_2",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_drift_3",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_drift_4",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_grip_1_oval",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_grip_2_gp_a",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_grip_3_gp_b",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_grip_5_club",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_grip_6_short_a",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/texas_speedway/texas_speedway_grip_7_short_b",
+        "difficulty": 1
+      }
+    ],
+    "Tokyo Dockyard": [
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_drag_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_drift_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_drift_3",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_grip_1",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_grip_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_grip_3",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_grip_4",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_grip_5",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_sc_1",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_sc_2",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_gd_sc_3",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/shuto_gd/shuto_sc_drag_1",
+        "difficulty": 1
+      }
+    ],
+    "Willow Springs": [
+      {
+        "zone": "tracks/willow_springs/willow_springs_drag_1",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_drift_2",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_drift_3",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_drift_4",
+        "difficulty": 0
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_drift_5",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_1_gp",
+        "difficulty": 1
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_2_horse",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_3_short_a",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_4_short_b",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_5_short_c",
+        "difficulty": 2
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_6_horse",
+        "difficulty": 3
+      },
+      {
+        "zone": "tracks/willow_springs/willow_springs_grip_7_gp",
+        "difficulty": 1
+      }
+    ]
+  }
+}
