@@ -79,6 +79,29 @@ function zoneDisplayName(zone) {
   const key = `TRACK_CONFIG_${zeroPad(tag)}`;
   return data_labels_str.calelas[key] || key;
 }
+/** Localized name from the selected race's LocalizationTag (not track_layout). */
+function raceByName(zone, raceName) {
+  if (!zone || !raceName) return null;
+  const races = Array.isArray(zone.races) ? zone.races : [];
+  return races.find(r => r?.Name === raceName) || null;
+}
+function raceDisplayName(zone, raceName) {
+  // Race Data.LocalizationTag → RACE_NAME_xxx (tipo_largo) / RACE_NAME_xxx_SHORT (tipo)
+  // e.g. 28 Wheelie, 24 Time Attack, 16 Sector Shootout, 7 Grip, 1 1/4 Mile Drag
+  const race = raceByName(zone, raceName);
+  const tag = race?.Data?.LocalizationTag;
+  if (tag == null) {
+    return zoneDisplayName(zone);
+  }
+  const longKey = `RACE_NAME_${zeroPad(tag)}`;
+  const shortKey = `RACE_NAME_${zeroPad(tag)}_SHORT`;
+  return (
+    data_labels_str.tipo_largo[longKey] ||
+    data_labels_str.tipo[shortKey] ||
+    data_labels_str.tipo[longKey] ||
+    longKey
+  );
+}
 function zoneTrackLength(zone) {
   return zone?.track_layout?.Data?.TrackLength ?? null;
 }
@@ -149,6 +172,35 @@ function analyzeZone(zone) {
   }
 
   return { modeType, variants: unique, isLooping, parents };
+}
+/** Resolve concrete race Name from zone + selected variant (mode). */
+function resolveRaceName(zone, variantId) {
+  const races = Array.isArray(zone?.races) ? zone.races : [];
+  if (!races.length) return null;
+  const info = analyzeZone(zone);
+  const v = info.variants.find(x => x.id === variantId) || info.variants[0] || null;
+  let parent = v?.parent || null;
+  // GripClass has no real ParentName — fall back to circuit
+  if (parent === "circuit_group") parent = "circuit";
+  if (parent) {
+    const match = races.find(r => r?.ParentName === parent);
+    if (match?.Name) return match.Name;
+  }
+  // Fallback: first race
+  return races[0]?.Name || null;
+}
+/** Split config value into vueltas (v) / rondas (r) by mode. */
+function lapsRoundsFromSelection(modeType, isLooping, value) {
+  const n = Math.max(1, Math.trunc(Number(value) || 1));
+  const isDragOrDrift = modeType === "Drift" || modeType === "Drag14" || modeType === "Drag12";
+  if (isDragOrDrift) {
+    return { v: 1, r: n };
+  }
+  if (modeType === "Speed" && !isLooping) {
+    return { v: 1, r: 1 };
+  }
+  // Grip, Speed looping
+  return { v: n, r: 1 };
 }
 function variantLabel(variantId) {
   // Prefer raceVariants structure populated by CambiarIdioma
@@ -222,10 +274,18 @@ function lockReason(loc) {
   return null;
 }
 function stripSelected(pred) {
-  for (const id of [...state.selected.keys()]) {
-    const loc = id.split("|")[0];
-    if (!pred(loc)) state.selected.delete(id);
-  }
+  // pred(locKey) true => keep
+  state.selected = state.selected.filter(entry => {
+    const loc = entry.zoneId.split("|")[0];
+    return pred(loc);
+  });
+}
+function countSelectedZone(zoneId) {
+  return state.selected.filter(e => e.zoneId === zoneId).length;
+}
+function nextUid() {
+  state._uid = (state._uid || 0) + 1;
+  return "s" + state._uid;
 }
 function toggleBlocked(loc) {
   if (state.blocked.has(loc)) {
@@ -270,10 +330,10 @@ function openConfig(id) {
   const { locKey, zoneKey } = parseZoneId(id);
   const zone = getZone(locKey, zoneKey);
   if (!zone || !canSelect(locKey)) return;
-  const existing = state.selected.get(id);
-  const base = existing || defaultConfig(zone);
+  // Always configure a NEW instance (same zone can be selected multiple times)
+  const base = defaultConfig(zone);
   state.config = {
-    id,
+    id, // zoneId (loc|zoneKey)
     locKey,
     zoneKey,
     zone,
@@ -284,11 +344,7 @@ function openConfig(id) {
   $("#configModal").classList.add("open");
 }
 function onZonePick(id) {
-  if (state.selected.has(id)) {
-    state.selected.delete(id);
-    render();
-    return;
-  }
+  // Always open config to add another instance of this zone
   openConfig(id);
 }
 function locationKeys() {
@@ -360,13 +416,18 @@ function zonesHtml(locKey, zones) {
   const locked = !canSelect(locKey);
   return shown.map(z => {
     const id = zoneId(locKey, z.zoneKey);
-    const sel = state.selected.has(id);
+    const count = countSelectedZone(id);
+    const sel = count > 0;
     const diffRankNum = getDifficultyRank(z.zoneKey);
     const diffText = difficultyLabel(diffRankNum);
     const modeText = modeTypeLabel(z.info.modeType);
     const len = zoneTrackLength(z.zone);
     const lenText = len != null ? (Math.round(len) + " " + kphUnit()) : "";
+    const badge = sel
+      ? '<span class="zone-count" title="Veces seleccionada">' + count + '</span>'
+      : '';
     return '<article class="zone ' + (sel ? "selected" : "") + (locked ? " locked" : "") + '">' +
+      badge +
       '<div class="zone-img">' + mapFrame(zoneMapSrc(z.zone), "Mapa " + z.name, z.name, z.info.modeType) +
       '<div class="map-overlay">MAP ZONE · ' + esc(modeText) + '</div></div>' +
       '<div class="zone-body"><div class="zone-name">' + esc(z.name) + '</div>' +
@@ -374,8 +435,8 @@ function zonesHtml(locKey, zones) {
       '<span class="tag difficulty ' + difficultyClass(diffRankNum) + '">' + esc(diffText) + '</span>' +
       (lenText ? '<span class="tag">' + esc(lenText) + '</span>' : '') +
       '</div>' +
-      '<div class="select-row"><span class="source">' + (locked ? "No disponible" : (sel ? "Seleccionada" : "Disponible")) + '</span>' +
-      '<button class="pick" data-zone="' + esc(id) + '" ' + (locked ? "disabled" : "") + '>' + (sel ? "Quitar" : "Seleccionar") + '</button>' +
+      '<div class="select-row"><span class="source">' + (locked ? "No disponible" : (sel ? ("Seleccionada ×" + count) : "Disponible")) + '</span>' +
+      '<button class="pick" data-zone="' + esc(id) + '" ' + (locked ? "disabled" : "") + '>Agregar</button>' +
       '</div></div></article>';
   }).join("");
 }
@@ -444,7 +505,10 @@ function renderConfig() {
   const showLaps = info.modeType === "Grip" || (info.modeType === "Speed" && info.isLooping);
   const showRounds = isDragOrDrift;
   const fixedOne = !showLaps && !showRounds;
-  const curLaps = Math.min(10, Math.max(1, Number(c.laps) || 1));
+  const curLapsRaw = Math.max(1, Number(c.laps) || 1);
+  // Keep full value in config; range thumb only maps 1–10
+  const rangeVal = Math.min(10, curLapsRaw);
+  const heatKind = showRounds ? "rounds" : "laps";
 
   if (lapSection) lapSection.hidden = false;
   if (showLaps) {
@@ -462,10 +526,11 @@ function renderConfig() {
       '<button class="option-btn active" type="button" disabled>1</button>';
   } else {
     $("#lapOptions").innerHTML =
-      '<div class="range-wrap">' +
-      '<input type="range" id="lapRange" min="1" max="10" value="' + curLaps + '">' +
-      '<span class="range-val" id="lapRangeVal">' + curLaps + '</span>' +
+      '<div class="range-wrap" id="lapRangeWrap" data-heat="' + heatKind + '">' +
+      '<input type="range" id="lapRange" min="1" max="10" value="' + rangeVal + '">' +
+      '<input type="number" class="range-val" id="lapRangeVal" min="1" step="1" value="' + curLapsRaw + '">' +
       '</div>';
+    applyRangeHeat(heatKind, curLapsRaw);
   }
 
   const len = zoneTrackLength(c.zone);
@@ -484,10 +549,20 @@ function saveConfig() {
   if (!c) return;
   const info = analyzeZone(c.zone);
   let laps = Number(c.laps) || 1;
+  if (laps < 1) laps = 1;
   if (info.modeType === "Speed" && !info.isLooping) laps = 1;
-  state.selected.set(c.id, {
+  const { v, r } = lapsRoundsFromSelection(info.modeType, info.isLooping, laps);
+  const race = resolveRaceName(c.zone, c.variant);
+  state.selected.push({
+    uid: nextUid(),
+    zoneId: c.id,
+    locKey: c.locKey,
+    zoneKey: c.zoneKey,
     variant: c.variant,
-    laps,
+    laps, // UI value (laps or rounds depending on mode)
+    v,
+    r,
+    race,
     modeType: info.modeType,
     isLooping: info.isLooping
   });
@@ -495,13 +570,116 @@ function saveConfig() {
   $("#configModal").classList.remove("open");
   render();
 }
+function raceDiffLabel(n) {
+  // 1 FACIL … 4 ELITE (creation form)
+  const map = { 1: "FACIL", 2: "NORMAL", 3: "DIFICIL", 4: "ELITE" };
+  const key = map[n] || "FACIL";
+  if (n === 4) return "ELITE";
+  return difficultyLabel(diffRank[key] ?? (n - 1)) || key;
+}
+function raceDiffClass(n) {
+  // Map creation difficulty 1–4 onto color ranks 0–3 (ELITE uses experto/orange-red)
+  const rank = Math.min(3, Math.max(0, (Number(n) || 1) - 1));
+  return "d-" + rank + (Number(n) === 4 ? " d-elite" : "");
+}
+/** Heat color for laps/rounds range. Over 10 → pink. */
+function applyRangeHeat(kind, value) {
+  const wrap = $("#lapRangeWrap");
+  const range = $("#lapRange");
+  const valInput = $("#lapRangeVal");
+  if (!wrap) return;
+  const n = Math.max(1, Number(value) || 1);
+  let t = 0; // 0 cool → 1 hot
+  let over = false;
+  if (n > 10) {
+    over = true;
+    t = 1;
+  } else if (kind === "rounds") {
+    // 3 = midpoint (cool). Toward 1 → full red; toward 10 → full red.
+    t = n <= 3
+      ? Math.min(1, (3 - n) / 2)   // 3→0, 1→1
+      : Math.min(1, (n - 3) / 7);  // 3→0, 10→1
+  } else {
+    // laps: hotter as value grows
+    t = Math.min(1, (n - 1) / 9);
+  }
+  // cool cyan/green → warm yellow → red; over-10 forced pink
+  let color;
+  if (over) {
+    color = "#ff7eb3";
+  } else if (t < 0.5) {
+    const u = t * 2;
+    color = lerpColor("#5ec8ff", "#ffd166", u);
+  } else {
+    const u = (t - 0.5) * 2;
+    color = lerpColor("#ffd166", "#ff3b4a", u);
+  }
+  wrap.style.setProperty("--range-heat", color);
+  wrap.classList.toggle("range-over", over);
+  if (range) range.style.accentColor = color;
+  if (valInput) {
+    valInput.style.borderColor = color;
+    valInput.style.color = over ? "#ffb3d4" : "#fff";
+  }
+}
+function lerpColor(a, b, t) {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const ar = (pa >> 16) & 255, ag = (pa >> 8) & 255, ab = pa & 255;
+  const br = (pb >> 16) & 255, bg = (pb >> 8) & 255, bb = pb & 255;
+  const r = Math.round(ar + (br - ar) * t);
+  const g = Math.round(ag + (bg - ag) * t);
+  const bl = Math.round(ab + (bb - ab) * t);
+  return "#" + [r, g, bl].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+function currentHeatKind() {
+  const wrap = $("#lapRangeWrap");
+  return wrap?.getAttribute("data-heat") || "laps";
+}
+/** Color race-difficulty range + label together (1 cool → 4 hot/pink-red). */
+function applyRaceDiffHeat(n) {
+  const range = $("#raceDiff");
+  const val = $("#raceDiffVal");
+  const t = Math.min(1, Math.max(0, ((Number(n) || 1) - 1) / 3));
+  let color;
+  if (t < 0.5) color = lerpColor("#9be15d", "#ffd166", t * 2);
+  else color = lerpColor("#ffd166", "#ff3b4a", (t - 0.5) * 2);
+  if (range) {
+    range.style.accentColor = color;
+    range.style.setProperty("--range-heat", color);
+  }
+  if (val) {
+    val.style.borderColor = color;
+    // keep class-based text color; border tracks the heat
+  }
+}
+function setRacePanel(panel) {
+  const swipe = $("#raceSwipe");
+  if (!swipe) return;
+  swipe.classList.remove("show-selected", "show-create", "show-summary");
+  swipe.classList.add("show-" + panel);
+  const kicker = $("#modalKicker");
+  if (kicker) {
+    kicker.textContent = panel === "selected" ? "Carrera definida"
+      : panel === "create" ? "Crear carrera"
+      : "Resumen";
+  }
+}
 function renderSelected() {
-  const arr = [...state.selected.entries()].map(([id, opt]) => {
-    const { locKey, zoneKey } = parseZoneId(id);
-    const zone = getZone(locKey, zoneKey);
-    return { id, locKey, zoneKey, zone, opt, name: zoneDisplayName(zone), locName: locDisplayName(locKey) };
+  const arr = state.selected.map(opt => {
+    const zone = getZone(opt.locKey, opt.zoneKey);
+    return {
+      uid: opt.uid,
+      id: opt.zoneId,
+      locKey: opt.locKey,
+      zoneKey: opt.zoneKey,
+      zone,
+      opt,
+      name: zoneDisplayName(zone),
+      locName: locDisplayName(opt.locKey)
+    };
   });
-  $("#selectedTitle").textContent = "Tus zonas seleccionadas (" + arr.length + ")";
+  $("#selectedTitle").textContent = "Carrera definida (" + arr.length + " zonas)";
   const wrap = $("#marksWrap");
   if (!state.chosen.size && !state.blocked.size) {
     wrap.innerHTML = "";
@@ -531,20 +709,216 @@ function renderSelected() {
     const diffRankNum = getDifficultyRank(x.zoneKey);
     const len = zoneTrackLength(x.zone);
     const lenText = len != null ? (Math.round(len) + " " + kphUnit()) : "";
-    return '<div class="selected-item"><div class="selected-map">' + mapFrame(zoneMapSrc(x.zone), "Mapa " + x.name, x.name, x.opt.modeType) + '</div>' +
-      '<div class="selected-info"><div class="kicker">Zona ' + String(i + 1).padStart(2, "0") + '</div>' +
-      '<h3>' + esc(x.locName) + " · " + esc(x.name) + '</h3>' +
-      '<p>' + esc(modeText) + ' · <strong class="difficulty ' + difficultyClass(diffRankNum) + '">' + esc(difficultyLabel(diffRankNum)) + '</strong></p>' +
-      '<div class="selected-details"><span class="tag">' + esc(vLabel) + '</span><span class="tag">' + x.opt.laps + " " + esc(unit) + '</span>' +
+    const racePath = x.opt.race || resolveRaceName(x.zone, x.opt.variant) || "";
+    // Localized label from the concrete race LocalizationTag (wheelie/ss/ta ≠ layout name)
+    const raceLabel = raceDisplayName(x.zone, racePath);
+    return '<div class="selected-item"><div class="selected-map">' + mapFrame(zoneMapSrc(x.zone), "Mapa " + raceLabel, raceLabel, x.opt.modeType) + '</div>' +
+      '<div class="selected-info"><div class="kicker">Zona ' + String(i + 1).padStart(2, "0") +
+      ' <button type="button" class="chip-remove" data-remove-uid="' + esc(x.uid) + '" title="Quitar">✕</button></div>' +
+      '<h3>' + esc(x.locName) + " · " + esc(raceLabel) + '</h3>' +
+      '<p>' + esc(modeText) + ' · ' + esc(vLabel) + ' · <strong class="difficulty ' + difficultyClass(diffRankNum) + '">' + esc(difficultyLabel(diffRankNum)) + '</strong></p>' +
+      '<p class="source" style="margin:4px 0 0;word-break:break-all">' + esc(racePath) + '</p>' +
+      '<div class="selected-details">' +
+      '<span class="tag">' + x.opt.laps + " " + esc(unit) + '</span>' +
       (lenText ? '<span class="tag">' + esc(lenText) + '</span>' : '') +
       '</div></div></div>';
   }).join("") : '<div class="empty" style="min-height:160px">No hay zonas seleccionadas todavía.</div>';
+  setRacePanel("selected");
+}
+function defaultRaceOptions() {
+  return {
+    nombre: "Mi Carrera",
+    dificultad: 1,
+    desafio: false,
+    ranked: false,
+    private: false,
+    colisiones: true,
+    ai: true,
+    comenzar: 2,
+    f1: "",
+    f2: 0,
+    f3: 0,
+    f4: false,
+    f14: 0
+  };
+}
+function renderCreateForm() {
+  if (!state.raceOpts) state.raceOpts = defaultRaceOptions();
+  const o = state.raceOpts;
+  const diffLab = raceDiffLabel(o.dificultad);
+  const warnPlayers = o.comenzar <= 1
+    ? '<p class="form-warn">Esta opción es válida y funcional, pero con el valor establecido bugeará la UI y crasheará el juego al intentar modificar las opciones de la sala in-game.</p>'
+    : "";
+  const INT_MIN = -2147483648;
+  const INT_MAX = 2147483647;
+  $("#createForm").innerHTML =
+    '<label class="form-field"><span class="kicker">Nombre de carrera</span>' +
+    '<input type="text" id="raceName" minlength="3" maxlength="20" value="' + esc(o.nombre) + '"></label>' +
+    '<label class="form-field"><span class="kicker">Dificultad</span>' +
+    '<div class="range-wrap" id="raceDiffWrap">' +
+    '<input type="range" id="raceDiff" min="1" max="4" value="' + o.dificultad + '">' +
+    '<span class="range-val range-val-text race-diff-val difficulty ' + raceDiffClass(o.dificultad) + '" id="raceDiffVal">' + esc(diffLab) + '</span>' +
+    '</div></label>' +
+    '<label class="form-check"><input type="checkbox" id="raceDesafio" disabled ' + (o.desafio ? "checked" : "") + '> Carrera Desafío</label>' +
+    '<label class="form-check"><input type="checkbox" id="raceRanked" ' + (o.ranked ? "checked" : "") + '> Ranked</label>' +
+    '<label class="form-check"><input type="checkbox" id="racePrivate" ' + (o.private ? "checked" : "") + '> Carrera Privada</label>' +
+    '<label class="form-check"><input type="checkbox" id="raceColisiones" ' + (o.colisiones ? "checked" : "") + '> Habilitar Colisiones</label>' +
+    '<label class="form-check"><input type="checkbox" id="raceAI" ' + (o.ai ? "checked" : "") + '> Habilitar Oponentes A.I</label>' +
+    '<label class="form-field"><span class="kicker">Jugadores necesarios para comenzar (0–8)</span>' +
+    '<input type="number" id="raceComenzar" min="0" max="8" step="1" value="' + o.comenzar + '">' +
+    warnPlayers + '</label>' +
+    '<details class="extra-flags">' +
+    '<summary>Opciones extra <span class="source">(flags desconocidas)</span></summary>' +
+    '<div class="extra-flags-body">' +
+    '<label class="form-field flag-field"><span class="kicker">FLAG 1 <span class="type-pill">string</span></span>' +
+    '<span class="flag-hint">comportamiento desconocido · 0–20 chars</span>' +
+    '<input type="text" id="raceF1" maxlength="20" value="' + esc(o.f1) + '"></label>' +
+    '<label class="form-field flag-field"><span class="kicker">FLAG 2 <span class="type-pill">int32</span></span>' +
+    '<span class="flag-hint">comportamiento desconocido · ' + INT_MIN + ' … ' + INT_MAX + '</span>' +
+    '<input type="number" id="raceF2" min="' + INT_MIN + '" max="' + INT_MAX + '" step="1" value="' + o.f2 + '"></label>' +
+    '<label class="form-field flag-field"><span class="kicker">FLAG 3 <span class="type-pill">int32</span></span>' +
+    '<span class="flag-hint">comportamiento desconocido · ' + INT_MIN + ' … ' + INT_MAX + '</span>' +
+    '<input type="number" id="raceF3" min="' + INT_MIN + '" max="' + INT_MAX + '" step="1" value="' + o.f3 + '"></label>' +
+    '<label class="form-check flag-field"><input type="checkbox" id="raceF4" ' + (o.f4 ? "checked" : "") + '> FLAG 4 <span class="type-pill">bool</span></label>' +
+    '<label class="form-field flag-field"><span class="kicker">FLAG 14 <span class="type-pill">int32</span></span>' +
+    '<span class="flag-hint">comportamiento desconocido · ' + INT_MIN + ' … ' + INT_MAX + '</span>' +
+    '<input type="number" id="raceF14" min="' + INT_MIN + '" max="' + INT_MAX + '" step="1" value="' + o.f14 + '"></label>' +
+    '</div></details>';
+  applyRaceDiffHeat(o.dificultad);
+}
+function readCreateForm() {
+  const o = state.raceOpts || defaultRaceOptions();
+  const nameEl = $("#raceName");
+  if (nameEl) {
+    let n = nameEl.value.trim();
+    if (n.length > 20) n = n.slice(0, 20);
+    o.nombre = n;
+  }
+  const diffEl = $("#raceDiff");
+  if (diffEl) o.dificultad = Math.min(4, Math.max(1, Number(diffEl.value) || 1));
+  o.desafio = false;
+  o.ranked = !!$("#raceRanked")?.checked;
+  o.private = !!$("#racePrivate")?.checked;
+  o.colisiones = !!$("#raceColisiones")?.checked;
+  o.ai = !!$("#raceAI")?.checked;
+  const com = $("#raceComenzar");
+  if (com) o.comenzar = Math.min(8, Math.max(0, Number(com.value) || 0));
+  const f1 = $("#raceF1");
+  if (f1) o.f1 = String(f1.value || "").slice(0, 20);
+  const clamp32 = (v) => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(-2147483648, Math.min(2147483647, Math.trunc(n)));
+  };
+  if ($("#raceF2")) o.f2 = clamp32($("#raceF2").value);
+  if ($("#raceF3")) o.f3 = clamp32($("#raceF3").value);
+  o.f4 = !!$("#raceF4")?.checked;
+  if ($("#raceF14")) o.f14 = clamp32($("#raceF14").value);
+  state.raceOpts = o;
+  return o;
+}
+function buildRaceJson() {
+  const o = readCreateForm();
+  // Group selections by location; calelas are race objects { race, v, r }
+  const byLoc = new Map();
+  for (const entry of state.selected) {
+    if (!byLoc.has(entry.locKey)) byLoc.set(entry.locKey, []);
+    const race = entry.race || resolveRaceName(getZone(entry.locKey, entry.zoneKey), entry.variant);
+    let v = entry.v;
+    let r = entry.r;
+    if (v == null || r == null) {
+      const lr = lapsRoundsFromSelection(entry.modeType, entry.isLooping, entry.laps);
+      v = lr.v;
+      r = lr.r;
+    }
+    byLoc.get(entry.locKey).push({
+      race,
+      v: Math.max(1, Math.trunc(Number(v) || 1)),
+      r: Math.max(1, Math.trunc(Number(r) || 1))
+    });
+  }
+  const selecciones = [...byLoc.entries()].map(([loc, calelas]) => ({
+    loc,
+    calelas
+  }));
+  return {
+    nombre: o.nombre,
+    dificultad: o.dificultad,
+    desafio: o.desafio,
+    ranked: o.ranked,
+    private: o.private,
+    colisiones: o.colisiones,
+    ai: o.ai,
+    comenzar: o.comenzar,
+    f1: o.f1,
+    f2: o.f2,
+    f3: o.f3,
+    f4: o.f4,
+    f14: o.f14,
+    selecciones
+  };
+}
+function renderSummary(data) {
+  const lines = [
+    ["Nombre", data.nombre],
+    ["Dificultad", data.dificultad + " (" + raceDiffLabel(data.dificultad) + ")"],
+    ["Desafío", data.desafio ? "Sí" : "No"],
+    ["Ranked", data.ranked ? "Sí" : "No"],
+    ["Privada", data.private ? "Sí" : "No"],
+    ["Colisiones", data.colisiones ? "Sí" : "No"],
+    ["Oponentes A.I", data.ai ? "Sí" : "No"],
+    ["Jugadores p/ comenzar", data.comenzar]
+  ];
+  const flagLines = [
+    ["FLAG 1", (data.f1 || "—") + " · string"],
+    ["FLAG 2", String(data.f2) + " · int32"],
+    ["FLAG 3", String(data.f3) + " · int32"],
+    ["FLAG 4", (data.f4 ? "Sí" : "No") + " · bool"],
+    ["FLAG 14", String(data.f14) + " · int32"]
+  ];
+  let zonesHtml = data.selecciones.map(s => {
+    const locName = locDisplayName(s.loc);
+    const items = (s.calelas || []).map(c => {
+      if (c && typeof c === "object") {
+        return esc(c.race || "?") + ' <span class="source">v:' + esc(String(c.v)) + ' · r:' + esc(String(c.r)) + '</span>';
+      }
+      return esc(String(c));
+    });
+    return '<div class="summary-loc"><strong>' + esc(locName) + '</strong><span class="source">(' + esc(s.loc) + ')</span>' +
+      '<ul>' + items.map(n => '<li>' + n + '</li>').join("") + '</ul></div>';
+  }).join("");
+  $("#createSummary").innerHTML =
+    '<div class="summary-grid">' +
+    lines.map(([k, v]) => '<div class="summary-row"><span class="kicker">' + esc(k) + '</span><span>' + esc(String(v)) + '</span></div>').join("") +
+    '</div>' +
+    '<details class="extra-flags summary-flags" open>' +
+    '<summary>Opciones extra <span class="source">(flags desconocidas)</span></summary>' +
+    '<div class="extra-flags-body">' +
+    flagLines.map(([k, v]) =>
+      '<div class="summary-row flag-field"><span class="kicker">' + esc(k) + '</span><span>' + esc(String(v)) + '</span></div>'
+    ).join("") +
+    '</div></details>' +
+    '<h3 class="summary-zones-title">Localizaciones</h3>' +
+    '<div class="summary-locs">' + (zonesHtml || '<p class="source">Sin races</p>') + '</div>';
+  $("#selectedTitle").textContent = data.nombre;
+}
+function downloadRaceJson(data) {
+  const name = String(data.nombre || "carrera").replace(/[^\w\u00C0-\u024f\- ]+/g, "").trim() || "carrera";
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name + ".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 function renderStats() {
   const locs = locationKeys();
   $("#locStat").textContent = locs.length;
   $("#zoneStat").textContent = locs.reduce((n, k) => n + zonesOf(k).length, 0);
-  $("#selectedCount").textContent = state.selected.size;
+  $("#selectedCount").textContent = state.selected.length;
   $("#chosenStat").textContent = state.chosen.size;
   $("#blockedStat").textContent = state.blocked.size;
   $("#chosenPill").hidden = state.chosen.size === 0;
@@ -556,12 +930,15 @@ function render() {
   renderStats();
 }
 function clearAll() {
-  state.selected.clear();
+  state.selected = [];
   state.blocked.clear();
   state.chosen.clear();
   state.config = null;
+  state.raceOpts = defaultRaceOptions();
+  state.lastRaceJson = null;
   $("#configModal").classList.remove("open");
   $("#modal").classList.remove("open");
+  setRacePanel("selected");
   render();
 }
 //#endregion
@@ -731,13 +1108,16 @@ const raceVariants = {
 const state = {
   location: null,
   mode: null,
-  selected: new Map(),
+  selected: [], // array of { uid, zoneId, locKey, zoneKey, variant, laps, modeType, isLooping }
   blocked: new Set(),
   chosen: new Set(),
   sort: "mode",
   query: "",
   config: null,
   lang: "Spanish",
+  raceOpts: null,
+  lastRaceJson: null,
+  _uid: 0,
 };
 const $ = (s) => document.querySelector(s);
 
@@ -953,19 +1333,57 @@ window.addEventListener("load", async () => {
   const keys = locationKeys();
   state.location = keys[0] ?? null;
   state.mode = null;
-  state.selected = new Map();
+  state.selected = [];
   state.blocked = new Set();
   state.chosen = new Set();
   state.sort = "mode";
   state.query = "";
   state.config = null;
+  state.raceOpts = defaultRaceOptions();
+  state.lastRaceJson = null;
 
   $("#search").addEventListener("input", e => { state.query = e.target.value.trim().toLowerCase(); render(); });
   $("#sort").addEventListener("change", e => { state.sort = e.target.value; renderContent(); });
   $("#reset").addEventListener("click", clearAll);
-  $("#accept").addEventListener("click", () => { renderSelected(); $("#modal").classList.add("open"); });
-  $("#close").addEventListener("click", () => $("#modal").classList.remove("open"));
-  $("#clearClose").addEventListener("click", clearAll);
+  $("#accept").addEventListener("click", () => {
+    renderSelected();
+    setRacePanel("selected");
+    $("#modal").classList.add("open");
+  });
+  $("#close").addEventListener("click", () => {
+    $("#modal").classList.remove("open");
+    setRacePanel("selected");
+  });
+  // "Crear" → swipe to creation form
+  $("#clearClose").addEventListener("click", () => {
+    if (!state.selected.length) {
+      alert("Seleccioná al menos una zona antes de crear la carrera.");
+      return;
+    }
+    if (!state.raceOpts) state.raceOpts = defaultRaceOptions();
+    renderCreateForm();
+    setRacePanel("create");
+    $("#selectedTitle").textContent = "Opciones de carrera";
+  });
+  $("#backToSelected")?.addEventListener("click", () => {
+    readCreateForm();
+    renderSelected();
+    setRacePanel("selected");
+  });
+  $("#confirmCreate")?.addEventListener("click", () => {
+    const data = buildRaceJson();
+    if (!data.nombre || data.nombre.length < 3 || data.nombre.length > 20) {
+      alert("El nombre de carrera debe tener entre 3 y 20 caracteres.");
+      return;
+    }
+    state.lastRaceJson = data;
+    renderSummary(data);
+    setRacePanel("summary");
+  });
+  $("#downloadRace")?.addEventListener("click", () => {
+    const data = state.lastRaceJson || buildRaceJson();
+    downloadRaceJson(data);
+  });
   $("#modal").addEventListener("click", e => { if (e.target.id === "modal") $("#modal").classList.remove("open"); });
   $("#configClose").addEventListener("click", () => { $("#configModal").classList.remove("open"); state.config = null; });
   $("#confirmZone").addEventListener("click", saveConfig);
@@ -988,6 +1406,15 @@ window.addEventListener("load", async () => {
   }
 
   document.addEventListener("click", e => {
+    const rem = e.target.closest("[data-remove-uid]");
+    if (rem) {
+      const uid = rem.getAttribute("data-remove-uid");
+      state.selected = state.selected.filter(x => x.uid !== uid);
+      renderSelected();
+      renderStats();
+      renderContent();
+      return;
+    }
     const block = e.target.closest("[data-block]");
     if (block) { toggleBlocked(block.getAttribute("data-block")); return; }
     const choose = e.target.closest("[data-choose]");
@@ -1010,12 +1437,42 @@ window.addEventListener("load", async () => {
   });
 
   document.addEventListener("input", e => {
-    if (!state.config) return;
-    if (e.target && e.target.id === "lapRange") {
-      const n = Number(e.target.value) || 1;
+    const t = e.target;
+    if (!t) return;
+    // Laps/rounds: range slider (1–10 visual) + editable number (any >= 1)
+    if (state.config && t.id === "lapRange") {
+      const n = Math.max(1, Number(t.value) || 1);
       state.config.laps = n;
       const val = $("#lapRangeVal");
-      if (val) val.textContent = String(n);
+      if (val) val.value = String(n);
+      applyRangeHeat(currentHeatKind(), n);
+      return;
+    }
+    if (state.config && t.id === "lapRangeVal") {
+      let n = Number(t.value);
+      if (!Number.isFinite(n) || n < 1) n = 1;
+      state.config.laps = Math.trunc(n);
+      const range = $("#lapRange");
+      if (range) range.value = String(Math.min(10, Math.max(1, state.config.laps)));
+      applyRangeHeat(currentHeatKind(), state.config.laps);
+      return;
+    }
+    // Race creation form live updates
+    if (t.id === "raceDiff") {
+      if (!state.raceOpts) state.raceOpts = defaultRaceOptions();
+      state.raceOpts.dificultad = Math.min(4, Math.max(1, Number(t.value) || 1));
+      const val = $("#raceDiffVal");
+      if (val) {
+        val.textContent = raceDiffLabel(state.raceOpts.dificultad);
+        val.className = "range-val range-val-text race-diff-val difficulty " + raceDiffClass(state.raceOpts.dificultad);
+      }
+      applyRaceDiffHeat(state.raceOpts.dificultad);
+      return;
+    }
+    if (t.id === "raceComenzar") {
+      readCreateForm();
+      renderCreateForm();
+      return;
     }
   });
 

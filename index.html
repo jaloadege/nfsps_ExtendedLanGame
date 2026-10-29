@@ -20,8 +20,8 @@
       <div class="kicker">Need for Speed · ProStreet</div>
       <div class="title">
         <div>
-          <h1>Localizaciones & zonas - v2.3</h1>
-          <p>Explorá por localización → modo → zona. Bloqueá localizaciones, marcalas como elegidas, y armá tu Race Day.
+          <h1>Creador de Carreras LAN extendido - v1.4</h1>
+          <p>Explorá por localización → modo → zona. Bloqueá localizaciones, marcalas como elegidas, y armá tu Carrera LAN.
           </p>
         </div>
       </div>
@@ -58,8 +58,8 @@
     </main>
 
     <div class="bottom">
-      <div class="progress">Selección: <span id="selectedCount">0</span> zonas</div>
-      <button class="primary" id="accept" type="button">Ver seleccionadas</button>
+      <div class="progress">Carrera: <span id="selectedCount">0</span> zonas</div>
+      <button class="primary" id="accept" type="button">Confirmar</button>
     </div>
 
     <div class="modal" id="configModal">
@@ -88,25 +88,43 @@
         </div>
         <div class="dialog-foot">
           <span class="source" id="configDifficulty"></span>
-          <button class="primary" id="confirmZone" type="button">Seleccionar zona</button>
+          <button class="primary" id="confirmZone" type="button">Agregar zona</button>
         </div>
       </div>
     </div>
 
     <div class="modal" id="modal">
-      <div class="dialog">
+      <div class="dialog race-dialog">
         <div class="dialog-head">
           <div>
-            <div class="kicker">Selección confirmada</div>
+            <div class="kicker" id="modalKicker">Carrera definida</div>
             <h2 id="selectedTitle">Tus zonas seleccionadas</h2>
           </div>
           <button class="close" id="close" type="button">Cerrar</button>
         </div>
-        <div id="marksWrap" class="marks-wrap"></div>
-        <div class="selected-grid" id="selectedGrid"></div>
-        <div class="dialog-foot">
-          <span class="source">Datos: Need for Speed Wiki / Fandom. Página HTML offline.</span>
-          <button class="primary" id="clearClose" type="button">Salir y limpiar</button>
+        <div class="race-swipe" id="raceSwipe">
+          <div class="race-panel" id="panelSelected">
+            <div id="marksWrap" class="marks-wrap"></div>
+            <div class="selected-grid" id="selectedGrid"></div>
+            <div class="dialog-foot">
+              <span class="source">Revisá las zonas y creá la carrera.</span>
+              <button class="primary" id="clearClose" type="button">Confirmar Creación</button>
+            </div>
+          </div>
+          <div class="race-panel" id="panelCreate">
+            <div class="create-form" id="createForm"></div>
+            <div class="dialog-foot">
+              <button class="ghost" id="backToSelected" type="button">Volver</button>
+              <button class="primary" id="confirmCreate" type="button">Confirmar creación</button>
+            </div>
+          </div>
+          <div class="race-panel" id="panelSummary">
+            <div class="create-summary" id="createSummary"></div>
+            <div class="dialog-foot">
+              <span class="source" id="summaryHint"></span>
+              <button class="primary" id="downloadRace" type="button">Descargar</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
