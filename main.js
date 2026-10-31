@@ -764,8 +764,8 @@ function renderCreateForm() {
     '<label class="form-check"><input type="checkbox" id="racePrivate" ' + (o.private ? "checked" : "") + '> Carrera Privada</label>' +
     '<label class="form-check"><input type="checkbox" id="raceColisiones" ' + (o.colisiones ? "checked" : "") + '> Habilitar Colisiones</label>' +
     '<label class="form-check"><input type="checkbox" id="raceAI" ' + (o.ai ? "checked" : "") + '> Habilitar Oponentes A.I</label>' +
-    '<label class="form-field"><span class="kicker">Jugadores necesarios para comenzar (0–8)</span>' +
-    '<input type="number" id="raceComenzar" min="0" max="8" step="1" value="' + o.comenzar + '">' +
+    '<label class="form-field"><span class="kicker">Jugadores necesarios para comenzar (1–8)</span>' +
+    '<input type="number" id="raceComenzar" min="1" max="8" step="1" value="' + o.comenzar + '">' +
     warnPlayers + '</label>' +
     '<details class="extra-flags">' +
     '<summary>Opciones extra <span class="source">(flags desconocidas)</span></summary>' +
